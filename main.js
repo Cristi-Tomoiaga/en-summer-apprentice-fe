@@ -3,10 +3,11 @@ function navigateTo(url) {
   history.pushState(null, null, url);
   renderContent(url);
 }
+
 // HTML templates
 function getHomePageTemplate() {
   return `
-   <div id="content" >
+    <div id="content" >
       <img src="./src/assets/Endava.png" alt="summer">
       <div class="events flex items-center justify-center flex-wrap">
       </div>
@@ -17,16 +18,18 @@ function getHomePageTemplate() {
 function getOrdersPageTemplate() {
   return `
     <div id="content">
-    <h1 class="text-2xl mb-4 mt-8 text-center">Purchased Tickets</h1>
+      <h1 class="text-2xl mb-4 mt-8 text-center">Purchased Tickets</h1>
     </div>
   `;
 }
 
 function setupNavigationEvents() {
   const navLinks = document.querySelectorAll('nav a');
+
   navLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
       event.preventDefault();
+      
       const href = link.getAttribute('href');
       navigateTo(href);
     });
@@ -59,6 +62,7 @@ function setupInitialPage() {
 function renderHomePage() {
   const mainContentDiv = document.querySelector('.main-content-component');
   mainContentDiv.innerHTML = getHomePageTemplate();
+
   // Sample hardcoded event data
   const eventData = {
     id: 1,
@@ -70,9 +74,11 @@ function renderHomePage() {
       { id: 2, description: 'VIP' },
     ],
   };
+
   // Create the event card element
   const eventCard = document.createElement('div');
   eventCard.classList.add('event-card'); 
+
   // Create the event content markup
   const contentMarkup = `
     <header>
@@ -86,6 +92,7 @@ function renderHomePage() {
 
   eventCard.innerHTML = contentMarkup;
   const eventsContainer = document.querySelector('.events');
+
   // Append the event card to the events container
   eventsContainer.appendChild(eventCard);
 }
@@ -106,6 +113,7 @@ function renderContent(url) {
     renderOrdersPage()
   }
 }
+
 
 // Call the setup functions
 setupNavigationEvents();
