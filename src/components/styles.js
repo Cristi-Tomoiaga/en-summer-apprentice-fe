@@ -6,7 +6,11 @@ const stylesBook = {
 
 export function useStyle(type) {
     if (typeof type === 'string') {
-        return stylesBook[type];
+      return stylesBook[type];
+    } else if (Array.isArray(type)) {
+      return type
+        .map(t => stylesBook[t])
+        .flat();
     }
 
     const allStyles = stylesBook.map(t => stylesBook[t]);
