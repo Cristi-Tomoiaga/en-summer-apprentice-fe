@@ -1,6 +1,6 @@
 const stylesBook = {
   eventCard: [
-    'border', 'rounded-2xl', 'pb-6', 'w-3/4', 'shadow-lg', 'm-4', 'lg:w-1/4'
+    'border', 'rounded-2xl', 'shadow-lg', 'pb-6'
   ],
   orderHeader: [
     'bg-slate-600', 'text-white'

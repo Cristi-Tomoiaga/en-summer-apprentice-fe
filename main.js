@@ -12,7 +12,7 @@ function getHomePageTemplate() {
   return `
     <div id="content">
       <img src="./src/assets/Endava.png" alt="summer">
-      <div class="events flex items-start justify-center flex-wrap mt-8">
+      <div class="events grid md:grid-cols-2 lg:grid-cols-3 items-stretch mt-8 p-4 gap-4">
       </div>
     </div>
   `;
@@ -207,6 +207,7 @@ const addOrders = () => {
       if (orders.length) {
         contentDiv.innerHTML = '';
         contentDiv.appendChild(createOrderHeader());
+        setupOrderHeaderListeners();
 
         orders.forEach(o => {
           const orderRow = createOrderRow(o);
@@ -222,16 +223,46 @@ const createOrderHeader = () => {
   orderHeader.classList.add(...useStyle("orderHeader"));
 
   const tableHeaderContent = `
-    <th class="order-table">Event Name</th>
-    <th class="order-table">Ordered At</th>
+    <th class="order-table">
+      <button id="sort-name-button">
+        Event Name
+        <i class="fa-solid fa-arrow-up-wide-short" id="sort-name-icon"></i> <!-- fa-arrow-down-wide-short -->
+      </button>
+    </th>
+    <th class="order-table">Date</th>
     <th class="order-table">Ticket Category</th>
     <th class="order-table">Number of Tickets</th>
-    <th class="order-table">Total Price</th>
+    <th class="order-table">
+      <button id="sort-price-button">
+        Total Price
+        <i class="fa-solid fa-arrow-up-wide-short" id="sort-price-icon"></i> <!-- fa-arrow-down-wide-short -->
+      </button>
+    </th>
     <th class="order-table w-32">Actions</th>
   `;
 
   orderHeader.innerHTML = tableHeaderContent;
   return orderHeader;
+}
+
+const setupOrderHeaderListeners = () => {
+  const sortNameButton = document.querySelector('#sort-name-button');
+  const sortPriceButton = document.querySelector('#sort-price-button');
+  const sortNameIcon = document.querySelector('#sort-name-icon');
+  const sortPriceIcon = document.querySelector('#sort-price-icon');
+
+  const arrowUpClass = 'fa-arrow-up-wide-short';
+  const arrowDownClass = 'fa-arrow-down-wide-short';
+
+  sortNameButton.addEventListener('click', () => {
+    sortNameIcon.classList.toggle(arrowUpClass);
+    sortNameIcon.classList.toggle(arrowDownClass);
+  });
+
+  sortPriceButton.addEventListener('click', () => {
+    sortPriceIcon.classList.toggle(arrowUpClass);
+    sortPriceIcon.classList.toggle(arrowDownClass);
+  });
 }
 
 const createOrderRow = (order) => {
@@ -246,13 +277,13 @@ const createOrderRow = (order) => {
     <td class="order-table">${order.event.name}</td>
     <td class="order-table">${new Date(order.timestamp).toLocaleDateString()}</td>
     <td class="order-table">
-      <select id="select-${order.id}" class="hidden w-fit">
+      <select id="select-${order.id}" class="hidden w-fit outline outline-1 rounded-md">
         ${ticketCategoryOptions.join('\n')}
       </select>
       <span id="ticket-category-${order.id}">${order.ticketCategory.description}</span>
     </td>
     <td class="order-table">
-      <input id="input-${order.id}" type="number" min="1" step="1" value="${order.numberOfTickets}" class="hidden w-16">
+      <input id="input-${order.id}" type="number" min="1" step="1" value="${order.numberOfTickets}" class="hidden w-16 border border-slate-700 rounded-md">
       <span id="number-tickets-${order.id}">${order.numberOfTickets}</span>
     </td>
     <td class="order-table">$${order.totalPrice}</td>
