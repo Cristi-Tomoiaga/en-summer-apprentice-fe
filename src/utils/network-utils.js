@@ -10,6 +10,15 @@ export async function fetchEvents() {
   return data;
 }
 
+export async function fetchOrders() {
+  const response = await fetch(`${BASE_URL_JAVA}/api/orders`, {
+    mode: 'cors'
+  });
+  const data = await response.json();
+
+  return data;
+}
+
 export async function postOrder(eventId, ticketCategoryId, numberOfTickets) {
   const response = await fetch(`${BASE_URL_JAVA}/api/orders`, {
     mode: 'cors',

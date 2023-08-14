@@ -1,5 +1,5 @@
 import {useStyle} from './src/components/styles.js';
-import {fetchEvents, postOrder} from "./src/utils/network-utils.js";
+import {fetchEvents, fetchOrders, postOrder} from "./src/utils/network-utils.js";
 
 // Navigate to a specific URL
 function navigateTo(url) {
@@ -12,7 +12,7 @@ function getHomePageTemplate() {
   return `
     <div id="content">
       <img src="./src/assets/Endava.png" alt="summer">
-      <div class="events flex items-start justify-start flex-wrap mt-8">
+      <div class="events flex items-start justify-center flex-wrap mt-8">
       </div>
     </div>
   `;
@@ -20,8 +20,10 @@ function getHomePageTemplate() {
 
 function getOrdersPageTemplate() {
   return `
-    <div id="content">
+    <div id="content" class="flex portrait:items-stretch landscape:items-center flex-col portrait:overflow-x-auto portrait:min-w-min px-2">
       <h1 class="text-2xl mb-4 mt-8 text-center">Purchased Tickets</h1>
+      <table id="orders-content" class="order-table border-collapse table-auto">
+      </table>
     </div>
   `;
 }
@@ -75,12 +77,14 @@ const addEvents = () => {
 
   fetchEvents()
     .then(eventsData => {
-      eventsContainer.innerHTML = '';
-      eventsData.forEach(ev => {
-        const eventCard = createEvent(ev);
-        eventsContainer.appendChild(eventCard);
-        setupEventCardListeners(ev);
-      });
+      if (eventsData.length) {
+        eventsContainer.innerHTML = '';
+        eventsData.forEach(ev => {
+          const eventCard = createEvent(ev);
+          eventsContainer.appendChild(eventCard);
+          setupEventCardListeners(ev);
+        });
+      }
     });
 }
 
@@ -190,6 +194,120 @@ const setupEventCardListeners = (eventData) => {
 function renderOrdersPage(categories) {
   const mainContentDiv = document.querySelector('.main-content-component');
   mainContentDiv.innerHTML = getOrdersPageTemplate();
+
+  addOrders();
+}
+
+const addOrders = () => {
+  const contentDiv = document.querySelector("#orders-content");
+  contentDiv.innerHTML = 'No orders';
+
+  fetchOrders()
+    .then(orders => {
+      if (orders.length) {
+        contentDiv.innerHTML = '';
+        contentDiv.appendChild(createOrderHeader());
+
+        orders.forEach(o => {
+          const orderRow = createOrderRow(o);
+          contentDiv.appendChild(orderRow);
+          setupOrderRowListeners(o);
+        });
+      }
+    })
+}
+
+const createOrderHeader = () => {
+  const orderHeader = document.createElement('tr');
+  orderHeader.classList.add(...useStyle("orderHeader"));
+
+  const tableHeaderContent = `
+    <th class="order-table">Event Name</th>
+    <th class="order-table">Ordered At</th>
+    <th class="order-table">Ticket Category</th>
+    <th class="order-table">Number of Tickets</th>
+    <th class="order-table">Total Price</th>
+    <th class="order-table w-32">Actions</th>
+  `;
+
+  orderHeader.innerHTML = tableHeaderContent;
+  return orderHeader;
+}
+
+const createOrderRow = (order) => {
+  const orderRow = document.createElement('tr');
+
+  const ticketCategoryOptions = order.event.ticketCategories
+    .map(tc => `
+      <option value="${tc.id}" ${tc.id === order.ticketCategory.id ? 'selected' : ''}>${tc.description} - $${tc.price}</option>
+    `);
+
+  const rowContent = `
+    <td class="order-table">${order.event.name}</td>
+    <td class="order-table">${new Date(order.timestamp).toLocaleDateString()}</td>
+    <td class="order-table">
+      <select id="select-${order.id}" class="hidden w-fit">
+        ${ticketCategoryOptions.join('\n')}
+      </select>
+      <span id="ticket-category-${order.id}">${order.ticketCategory.description}</span>
+    </td>
+    <td class="order-table">
+      <input id="input-${order.id}" type="number" min="1" step="1" value="${order.numberOfTickets}" class="hidden w-16">
+      <span id="number-tickets-${order.id}">${order.numberOfTickets}</span>
+    </td>
+    <td class="order-table">$${order.totalPrice}</td>
+    <td class="order-table">
+      <span class="flex justify-center gap-2">
+        <button id="confirm-${order.id}" class="hidden">
+          <i class="fa-solid fa-check"></i>
+        </button>
+        <button id="cancel-${order.id}" class="hidden">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button id="edit-${order.id}">
+          <i class="fa-solid fa-pencil"></i>
+        </button>
+        <button id="delete-${order.id}">
+          <i class="fa-solid fa-trash-can text-amber-700"></i>
+        </button>
+      </span>
+    </td>
+  `;
+
+  orderRow.innerHTML = rowContent;
+  return orderRow;
+}
+
+const setupOrderRowListeners = (order) => {
+  const editButton = document.querySelector(`#edit-${order.id}`);
+  const confirmButton = document.querySelector(`#confirm-${order.id}`);
+  const cancelButton = document.querySelector(`#cancel-${order.id}`);
+  const ticketCategorySelect = document.querySelector(`#select-${order.id}`);
+  const numberOfTicketsInput = document.querySelector(`#input-${order.id}`);
+  const ticketCategorySpan = document.querySelector(`#ticket-category-${order.id}`);
+  const numberOfTicketsSpan = document.querySelector(`#number-tickets-${order.id}`);
+
+  editButton.addEventListener('click', () => {
+    editButton.classList.add('hidden');
+    confirmButton.classList.remove('hidden');
+    cancelButton.classList.remove('hidden');
+
+    ticketCategorySelect.classList.remove('hidden');
+    numberOfTicketsInput.classList.remove('hidden');
+    ticketCategorySpan.classList.add('hidden');
+    numberOfTicketsSpan.classList.add('hidden');
+  });
+
+  cancelButton.addEventListener('click', () => {
+    editButton.classList.remove('hidden');
+    confirmButton.classList.add('hidden');
+    cancelButton.classList.add('hidden');
+
+    ticketCategorySelect.classList.add('hidden');
+    numberOfTicketsInput.classList.add('hidden');
+    ticketCategorySpan.classList.remove('hidden');
+    numberOfTicketsSpan.classList.remove('hidden');
+  });
 }
 
 // Render content based on URL

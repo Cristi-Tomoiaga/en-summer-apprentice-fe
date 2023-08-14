@@ -2,11 +2,6 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-.events {
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
 h1 {
   text-align: center;
   font-size: 32px;
@@ -69,5 +64,9 @@ h1 {
 
 .main-content-component {
   margin-bottom: 40px;
+}
+
+.order-table {
+  @apply border border-slate-800 p-2;
 }
 
