@@ -1,11 +1,13 @@
 import {fetchOrders} from "../utils/network-utils.js";
 import {createOrderRow, setupOrderRowListeners} from "./order-row.js";
 import {createOrderHeader, setupOrderHeaderListeners} from "./order-header.js";
+import {addLoader, removeLoader} from "./loader.js";
 
 export const createOrdersComponent = () => {
   const contentDiv = document.querySelector("#orders-content");
   contentDiv.innerHTML = 'No orders';
 
+  addLoader();
   fetchOrders()
     .then(orders => {
       if (orders.length) {
@@ -18,6 +20,8 @@ export const createOrdersComponent = () => {
           contentDiv.appendChild(orderRow);
           setupOrderRowListeners(o);
         });
+
+        setTimeout(removeLoader, 250);
       }
     })
     .catch(err => {
