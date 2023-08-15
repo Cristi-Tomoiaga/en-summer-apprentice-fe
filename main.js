@@ -15,12 +15,12 @@ function getHomePageTemplate() {
       <div class="grid grid-cols-2 gap-4 w-3/4 md:w-1/4 mt-8 p-4">
         <h2 class="text-3xl text-[#de411b] font-semibold col-span-2 justify-self-center">Filter events</h2>
         <input type="text" id="filter-name" class="col-span-2 h-8 p-2 border border-slate-700 rounded-md" placeholder="Event name">
-        <select id="filter-venue" class="h-8 outline outline-1 rounded-md">
+        <select id="filter-venue" class="h-8 outline outline-1 rounded-md truncate">
         </select>
-        <select id="filter-type" class="h-8 outline outline-1 rounded-md">
+        <select id="filter-type" class="h-8 outline outline-1 rounded-md truncate">
         </select>
       </div>
-      <div class="events grid md:grid-cols-2 lg:grid-cols-3 items-stretch mt-1 p-4 gap-4">
+      <div class="events grid md:grid-cols-2 w-4/5 lg:grid-cols-3 items-stretch mt-1 p-4 gap-4">
       </div>
     </div>
   `;
