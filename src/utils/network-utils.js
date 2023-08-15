@@ -3,8 +3,11 @@ const BASE_URL_NET = 'http://localhost:8081';
 
 // TODO: Better error messages in exceptions, needs backend changes
 
-export async function fetchEvents() {
-  const response = await fetch(`${BASE_URL_JAVA}/api/events`, {
+export async function fetchEvents(query = null) {
+  const fetchUrl = query === null ? `${BASE_URL_JAVA}/api/events`
+                                         : `${BASE_URL_JAVA}/api/events?${query.toString()}`;
+
+  const response = await fetch(fetchUrl, {
     mode: 'cors'
   });
   if (!response.ok) {
