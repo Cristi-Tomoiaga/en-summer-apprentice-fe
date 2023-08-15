@@ -94,12 +94,17 @@ export const setupEventCardListeners = (eventData) => {
 
     postOrder(eventId, ticketCategoryId, numberOfTickets)
       .then(o => {
-        console.log("Done", o);
+        toastr.success('Order placed!');
+        console.log('Done', o);
 
         numberOfTicketsInput.value = 0;
         buyButton.disabled = true;
         minusButton.disabled = true;
         ticketCategorySelect.selectedIndex = 0;
+      })
+      .catch(err => {
+        toastr.error(err.message, 'Error');
+        console.log('Error: ' + err.message);
       });
   });
 }

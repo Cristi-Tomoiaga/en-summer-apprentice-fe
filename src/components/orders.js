@@ -20,4 +20,8 @@ export const createOrdersComponent = () => {
         });
       }
     })
+    .catch(err => {
+      toastr.error(err.message, 'Error');
+      console.log('Error: ' + err.message);
+    });
 }
