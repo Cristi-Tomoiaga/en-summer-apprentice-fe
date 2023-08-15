@@ -11,17 +11,19 @@ export const createEventsComponent = () => {
     .then(eventsData => {
       if (eventsData.length) {
         eventsContainer.innerHTML = '';
+
         eventsData.forEach(ev => {
           const eventCard = createEventCard(ev);
           eventsContainer.appendChild(eventCard);
           setupEventCardListeners(ev);
         });
-
-        setTimeout(removeLoader, 250);
       }
     })
     .catch(err => {
       toastr.error(err.message, 'Error');
       console.log('Error: ' + err.message);
+    })
+    .finally(() => {
+      setTimeout(removeLoader, 250);
     });
 }

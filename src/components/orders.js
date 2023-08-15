@@ -20,12 +20,13 @@ export const createOrdersComponent = () => {
           contentDiv.appendChild(orderRow);
           setupOrderRowListeners(o);
         });
-
-        setTimeout(removeLoader, 250);
       }
     })
     .catch(err => {
       toastr.error(err.message, 'Error');
       console.log('Error: ' + err.message);
+    })
+    .finally(() => {
+      setTimeout(removeLoader, 250);
     });
 }
