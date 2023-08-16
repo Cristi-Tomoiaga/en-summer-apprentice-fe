@@ -4,25 +4,28 @@ import {createOrderHeader, setupOrderHeaderListeners} from "./order-header.js";
 import {addLoader, removeLoader} from "./loader.js";
 
 export const createOrdersComponent = () => {
-  const contentDiv = document.querySelector("#orders-content");
-  contentDiv.innerHTML = 'No orders';
+  const ordersTableHeader = document.querySelector("#orders-content thead");
+  const ordersTableBody = document.querySelector("#orders-content tbody");
+  ordersTableBody.innerHTML = 'No orders';
 
   addLoader();
   fetchOrders()
     .then(orders => {
       if (orders.length) {
-        contentDiv.innerHTML = '';
-        contentDiv.appendChild(createOrderHeader());
+        ordersTableHeader.innerHTML = '';
+        ordersTableHeader.appendChild(createOrderHeader());
+        ordersTableBody.innerHTML = '';
+
         setupOrderHeaderListeners(orders, (sortedOrders) => {
           if (sortedOrders.length) {
-            contentDiv.innerHTML = '';
-            createOrdersRows(contentDiv, sortedOrders);
+            ordersTableBody.innerHTML = '';
+            createOrdersRows(ordersTableBody, sortedOrders);
           } else {
-            contentDiv.innerHTML = 'No orders';
+            ordersTableBody.innerHTML = 'No orders';
           }
         });
 
-        createOrdersRows(contentDiv, orders);
+        createOrdersRows(ordersTableBody, orders);
       }
     })
     .catch(err => {

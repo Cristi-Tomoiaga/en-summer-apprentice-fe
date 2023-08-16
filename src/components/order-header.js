@@ -27,7 +27,7 @@ export const createOrderHeader = () => {
   return orderHeader;
 }
 
-export const setupOrderHeaderListeners = () => {
+export const setupOrderHeaderListeners = (orders, updateCallback) => {
   const sortNameButton = document.querySelector('#sort-name-button');
   const sortPriceButton = document.querySelector('#sort-price-button');
   const sortNameIcon = document.querySelector('#sort-name-icon');
@@ -39,10 +39,52 @@ export const setupOrderHeaderListeners = () => {
   sortNameButton.addEventListener('click', () => {
     sortNameIcon.classList.toggle(arrowUpClass);
     sortNameIcon.classList.toggle(arrowDownClass);
+
+    if (sortNameIcon.classList.contains(arrowUpClass)) {
+      const sortedOrders = orders.sort((first, second) => {
+        const firstName = first.event.name.toLowerCase();
+        const secondName = second.event.name.toLowerCase();
+
+        if (firstName < secondName) {
+          return -1;
+        }
+        if (firstName > secondName) {
+          return 1;
+        }
+        return 0;
+      });
+
+      updateCallback(sortedOrders);
+    } else {
+      const sortedOrders = orders.sort((first, second) => {
+        const firstName = first.event.name.toLowerCase();
+        const secondName = second.event.name.toLowerCase();
+
+        if (firstName > secondName) {
+          return -1;
+        }
+        if (firstName < secondName) {
+          return 1;
+        }
+        return 0;
+      });
+
+      updateCallback(sortedOrders);
+    }
   });
 
   sortPriceButton.addEventListener('click', () => {
     sortPriceIcon.classList.toggle(arrowUpClass);
     sortPriceIcon.classList.toggle(arrowDownClass);
+
+    if (sortPriceIcon.classList.contains(arrowUpClass)) {
+      const sortedOrders = orders.sort((first, second) => first.totalPrice - second.totalPrice);
+
+      updateCallback(sortedOrders);
+    } else {
+      const sortedOrders = orders.sort((first, second) => second.totalPrice - first.totalPrice);
+
+      updateCallback(sortedOrders);
+    }
   });
 }

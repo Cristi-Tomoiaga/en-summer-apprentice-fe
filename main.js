@@ -31,6 +31,10 @@ function getOrdersPageTemplate() {
     <div id="content" class="flex portrait:items-stretch landscape:items-center flex-col portrait:overflow-x-auto portrait:min-w-min px-2">
       <h1 class="text-2xl mb-4 mt-8 text-center">Purchased Tickets</h1>
       <table id="orders-content" class="order-table border-collapse table-auto">
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
       </table>
     </div>
   `;
