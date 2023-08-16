@@ -1,4 +1,4 @@
-import {deleteOrder} from "../utils/network-utils.js";
+import {deleteOrder, updateOrder} from "../utils/network-utils.js";
 
 export const createOrderRow = (order) => {
   const orderRow = document.createElement('tr');
@@ -22,7 +22,7 @@ export const createOrderRow = (order) => {
       <input id="input-${order.id}" type="number" min="1" step="1" value="${order.numberOfTickets}" class="hidden w-16 text-orange-700 border-2 border-orange-700 outline-none rounded-md">
       <span id="number-tickets-${order.id}">${order.numberOfTickets}</span>
     </td>
-    <td class="order-table">$${order.totalPrice}</td>
+    <td id="price-${order.id}" class="order-table">$${order.totalPrice}</td>
     <td class="order-table">
       <span class="flex justify-center gap-2">
         <button id="confirm-${order.id}" class="hidden hover:text-green-700">
@@ -55,6 +55,7 @@ export const setupOrderRowListeners = (order) => {
   const numberOfTicketsInput = document.querySelector(`#input-${order.id}`);
   const ticketCategorySpan = document.querySelector(`#ticket-category-${order.id}`);
   const numberOfTicketsSpan = document.querySelector(`#number-tickets-${order.id}`);
+  const priceSpan = document.querySelector(`#price-${order.id}`);
 
   numberOfTicketsInput.addEventListener('change', () => {
     const numberOfTickets = numberOfTicketsInput.value;
@@ -66,6 +67,34 @@ export const setupOrderRowListeners = (order) => {
 
   editButton.addEventListener('click', () => {
     showEditingView();
+  });
+
+  confirmButton.addEventListener('click', () => {
+    hideEditingView();
+
+    const ticketCategoryId = parseInt(ticketCategorySelect.value);
+    const numberOfTickets = parseInt(numberOfTicketsInput.value);
+
+    updateOrder(order.id, ticketCategoryId, numberOfTickets)
+      .then(updatedOrder => {
+        order = updatedOrder;
+        ticketCategorySpan.innerHTML = order.ticketCategory.description;
+        numberOfTicketsSpan.innerHTML = order.numberOfTickets;
+        priceSpan.innerHTML = `$${order.totalPrice}`;
+
+        toastr.success('Order updated!');
+      })
+      .catch(err => {
+        order.event.ticketCategories.forEach((tc, index) => {
+          if (tc.id === order.ticketCategory.id) {
+            ticketCategorySelect.selectedIndex = index;
+          }
+        });
+        numberOfTicketsInput.value = order.numberOfTickets;
+
+        toastr.error(err.message, 'Error');
+        console.log('Error: ' + err.message);
+      });
   });
 
   cancelButton.addEventListener('click', () => {
