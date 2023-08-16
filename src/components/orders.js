@@ -13,13 +13,16 @@ export const createOrdersComponent = () => {
       if (orders.length) {
         contentDiv.innerHTML = '';
         contentDiv.appendChild(createOrderHeader());
-        setupOrderHeaderListeners();
-
-        orders.forEach(o => {
-          const orderRow = createOrderRow(o);
-          contentDiv.appendChild(orderRow);
-          setupOrderRowListeners(o);
+        setupOrderHeaderListeners(orders, (sortedOrders) => {
+          if (sortedOrders.length) {
+            contentDiv.innerHTML = '';
+            createOrdersRows(contentDiv, sortedOrders);
+          } else {
+            contentDiv.innerHTML = 'No orders';
+          }
         });
+
+        createOrdersRows(contentDiv, orders);
       }
     })
     .catch(err => {
@@ -29,4 +32,12 @@ export const createOrdersComponent = () => {
     .finally(() => {
       setTimeout(removeLoader, 250);
     });
+}
+
+const createOrdersRows = (ordersContainer, orders) => {
+  orders.forEach(o => {
+    const orderRow = createOrderRow(o);
+    ordersContainer.appendChild(orderRow);
+    setupOrderRowListeners(o);
+  });
 }
