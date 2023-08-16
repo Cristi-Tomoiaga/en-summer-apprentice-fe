@@ -1,5 +1,6 @@
 export const createOrderRow = (order) => {
   const orderRow = document.createElement('tr');
+  orderRow.id = `order-${order.id}`;
 
   const ticketCategoryOptions = order.event.ticketCategories
     .map(tc => `
@@ -10,22 +11,22 @@ export const createOrderRow = (order) => {
     <td class="order-table">${order.event.name}</td>
     <td class="order-table">${new Date(order.timestamp).toLocaleDateString()}</td>
     <td class="order-table">
-      <select id="select-${order.id}" class="hidden w-fit outline outline-1 rounded-md">
+      <select id="select-${order.id}" class="hidden w-fit text-orange-700 outline outline-2 outline-orange-700 rounded-md">
         ${ticketCategoryOptions.join('\n')}
       </select>
       <span id="ticket-category-${order.id}">${order.ticketCategory.description}</span>
     </td>
     <td class="order-table">
-      <input id="input-${order.id}" type="number" min="1" step="1" value="${order.numberOfTickets}" class="hidden w-16 border border-slate-700 rounded-md">
+      <input id="input-${order.id}" type="number" min="1" step="1" value="${order.numberOfTickets}" class="hidden w-16 text-orange-700 border-2 border-orange-700 outline-none rounded-md">
       <span id="number-tickets-${order.id}">${order.numberOfTickets}</span>
     </td>
     <td class="order-table">$${order.totalPrice}</td>
     <td class="order-table">
       <span class="flex justify-center gap-2">
-        <button id="confirm-${order.id}" class="hidden">
+        <button id="confirm-${order.id}" class="hidden hover:text-green-700">
           <i class="fa-solid fa-check"></i>
         </button>
-        <button id="cancel-${order.id}" class="hidden">
+        <button id="cancel-${order.id}" class="hidden hover:text-red-700">
           <i class="fa-solid fa-xmark"></i>
         </button>
         <button id="edit-${order.id}">
@@ -50,6 +51,14 @@ export const setupOrderRowListeners = (order) => {
   const numberOfTicketsInput = document.querySelector(`#input-${order.id}`);
   const ticketCategorySpan = document.querySelector(`#ticket-category-${order.id}`);
   const numberOfTicketsSpan = document.querySelector(`#number-tickets-${order.id}`);
+
+  numberOfTicketsInput.addEventListener('change', () => {
+    const numberOfTickets = numberOfTicketsInput.value;
+
+    if (numberOfTickets === '' || parseInt(numberOfTickets) <= 0) {
+      numberOfTicketsInput.value = 1;
+    }
+  });
 
   editButton.addEventListener('click', () => {
     editButton.classList.add('hidden');
