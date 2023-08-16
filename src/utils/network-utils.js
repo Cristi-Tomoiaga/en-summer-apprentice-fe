@@ -53,3 +53,35 @@ export async function postOrder(eventId, ticketCategoryId, numberOfTickets) {
 
   return data;
 }
+
+export async function updateOrder(orderId, ticketCategoryId, numberOfTickets) {
+  const response = await fetch(`${BASE_URL_NET}/api/orders/${orderId}`, {
+    mode: 'cors',
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      ticketCategoryId,
+      numberOfTickets
+    })
+  });
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const data = await response.json();
+
+  return data;
+}
+
+export async function deleteOrder(orderId) {
+  const response = await fetch(`${BASE_URL_NET}/api/orders/${orderId}`, {
+    mode: 'cors',
+    method: 'DELETE'
+  });
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+}
