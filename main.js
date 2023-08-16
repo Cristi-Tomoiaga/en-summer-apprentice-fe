@@ -83,7 +83,7 @@ function renderHomePage() {
   createEventsComponent();
 }
 
-function renderOrdersPage(categories) {
+function renderOrdersPage() {
   const mainContentDiv = document.querySelector('.main-content-component');
   mainContentDiv.innerHTML = getOrdersPageTemplate();
 

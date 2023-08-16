@@ -75,6 +75,10 @@ export const setupOrderRowListeners = (order) => {
     const ticketCategoryId = parseInt(ticketCategorySelect.value);
     const numberOfTickets = parseInt(numberOfTicketsInput.value);
 
+    if (ticketCategoryId === order.ticketCategory.id && numberOfTickets === order.numberOfTickets) {
+      return;
+    }
+
     updateOrder(order.id, ticketCategoryId, numberOfTickets)
       .then(updatedOrder => {
         order = updatedOrder;
