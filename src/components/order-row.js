@@ -1,3 +1,5 @@
+import {deleteOrder} from "../utils/network-utils.js";
+
 export const createOrderRow = (order) => {
   const orderRow = document.createElement('tr');
   orderRow.id = `order-${order.id}`;
@@ -47,6 +49,8 @@ export const setupOrderRowListeners = (order) => {
   const editButton = document.querySelector(`#edit-${order.id}`);
   const confirmButton = document.querySelector(`#confirm-${order.id}`);
   const cancelButton = document.querySelector(`#cancel-${order.id}`);
+  const deleteButton = document.querySelector(`#delete-${order.id}`);
+
   const ticketCategorySelect = document.querySelector(`#select-${order.id}`);
   const numberOfTicketsInput = document.querySelector(`#input-${order.id}`);
   const ticketCategorySpan = document.querySelector(`#ticket-category-${order.id}`);
@@ -61,17 +65,28 @@ export const setupOrderRowListeners = (order) => {
   });
 
   editButton.addEventListener('click', () => {
-    editButton.classList.add('hidden');
-    confirmButton.classList.remove('hidden');
-    cancelButton.classList.remove('hidden');
-
-    ticketCategorySelect.classList.remove('hidden');
-    numberOfTicketsInput.classList.remove('hidden');
-    ticketCategorySpan.classList.add('hidden');
-    numberOfTicketsSpan.classList.add('hidden');
+    showEditingView();
   });
 
   cancelButton.addEventListener('click', () => {
+    hideEditingView();
+  });
+
+  deleteButton.addEventListener('click', () => {
+    deleteOrder(order.id)
+      .then(() => {
+        const orderRow = document.querySelector(`#order-${order.id}`);
+        orderRow.remove();
+
+        toastr.success('Order deleted!');
+      })
+      .catch(err => {
+        toastr.error(err.message, 'Error');
+        console.log('Error: ' + err.message);
+      });
+  });
+
+  function hideEditingView() {
     editButton.classList.remove('hidden');
     confirmButton.classList.add('hidden');
     cancelButton.classList.add('hidden');
@@ -80,5 +95,16 @@ export const setupOrderRowListeners = (order) => {
     numberOfTicketsInput.classList.add('hidden');
     ticketCategorySpan.classList.remove('hidden');
     numberOfTicketsSpan.classList.remove('hidden');
-  });
+  }
+
+  function showEditingView() {
+    editButton.classList.add('hidden');
+    confirmButton.classList.remove('hidden');
+    cancelButton.classList.remove('hidden');
+
+    ticketCategorySelect.classList.remove('hidden');
+    numberOfTicketsInput.classList.remove('hidden');
+    ticketCategorySpan.classList.add('hidden');
+    numberOfTicketsSpan.classList.add('hidden');
+  }
 }
