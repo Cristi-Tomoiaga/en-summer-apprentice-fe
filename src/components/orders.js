@@ -41,6 +41,6 @@ const createOrdersRows = (ordersContainer, orders) => {
   orders.forEach(o => {
     const orderRow = createOrderRow(o);
     ordersContainer.appendChild(orderRow);
-    setupOrderRowListeners(o);
+    setupOrderRowListeners(orders, o);
   });
 }

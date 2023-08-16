@@ -45,7 +45,7 @@ export const createOrderRow = (order) => {
   return orderRow;
 }
 
-export const setupOrderRowListeners = (order) => {
+export const setupOrderRowListeners = (orders, order) => {
   const editButton = document.querySelector(`#edit-${order.id}`);
   const confirmButton = document.querySelector(`#confirm-${order.id}`);
   const cancelButton = document.querySelector(`#cancel-${order.id}`);
@@ -110,6 +110,9 @@ export const setupOrderRowListeners = (order) => {
       .then(() => {
         const orderRow = document.querySelector(`#order-${order.id}`);
         orderRow.remove();
+
+        const orderIndex = orders.indexOf(order);
+        orders.splice(orderIndex, 1);
 
         toastr.success('Order deleted!');
       })
