@@ -46,6 +46,7 @@ export const setupFilterListeners = (events, updateCallback) => {
 
         initialName = name;
         updateCallback(filteredEvents);
+        updateUrlSearchParams(name, venue, type);
       }
 
       return;
@@ -64,6 +65,7 @@ export const setupFilterListeners = (events, updateCallback) => {
         filteredEventsData = filterEventsByName(filteredEventsData, name);
 
         updateCallback(filteredEventsData);
+        updateUrlSearchParams(name, venue, type);
       })
       .catch(err => {
         toastr.error(err.message, 'Error');
@@ -77,7 +79,16 @@ export const setupFilterListeners = (events, updateCallback) => {
     initialType = type;
   }
 
-  function filterEventsByName(events, name) {
-    return events.filter(event => event.name.toLowerCase().includes(name.toLowerCase()));
+  function updateUrlSearchParams(eventName, venueLocation, eventType) {
+    const url = new URL(document.location);
+
+    url.searchParams.set('eventName', eventName || '');
+    url.searchParams.set('venueLocation', venueLocation || '');
+    url.searchParams.set('eventType', eventType || '');
+    history.pushState(null, '', url.toString());
   }
+}
+
+export const filterEventsByName = (events, name) => {
+  return events.filter(event => event.name.toLowerCase().includes(name.toLowerCase()));
 }
