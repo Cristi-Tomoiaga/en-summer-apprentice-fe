@@ -1,8 +1,6 @@
 const BASE_URL_JAVA = 'http://localhost:8080';
 const BASE_URL_NET = 'http://localhost:8081';
 
-// TODO: Better error messages in exceptions, needs backend changes
-
 export async function fetchEvents(query = null) {
   const fetchUrl = query === null ? `${BASE_URL_JAVA}/api/events`
                                          : `${BASE_URL_JAVA}/api/events?${query.toString()}`;
@@ -11,6 +9,13 @@ export async function fetchEvents(query = null) {
     mode: 'cors'
   });
   if (!response.ok) {
+    const errorText = await response.text();
+
+    if (errorText.length > 0) {
+      const errorObject = JSON.parse(errorText);
+      throw new Error(errorObject.errorMessage);
+    }
+
     throw new Error(response.statusText);
   }
 
@@ -24,6 +29,13 @@ export async function fetchOrders() {
     mode: 'cors'
   });
   if (!response.ok) {
+    const errorText = await response.text();
+
+    if (errorText.length > 0) {
+      const errorObject = JSON.parse(errorText);
+      throw new Error(errorObject.errorMessage);
+    }
+
     throw new Error(response.statusText);
   }
 
@@ -46,6 +58,13 @@ export async function postOrder(eventId, ticketCategoryId, numberOfTickets) {
     })
   });
   if (!response.ok) {
+    const errorText = await response.text();
+
+    if (errorText.length > 0) {
+      const errorObject = JSON.parse(errorText);
+      throw new Error(errorObject.errorMessage);
+    }
+
     throw new Error(response.statusText);
   }
 
@@ -67,6 +86,13 @@ export async function updateOrder(orderId, ticketCategoryId, numberOfTickets) {
     })
   });
   if (!response.ok) {
+    const errorText = await response.text();
+
+    if (errorText.length > 0) {
+      const errorObject = JSON.parse(errorText);
+      throw new Error(errorObject.errorMessage);
+    }
+
     throw new Error(response.statusText);
   }
 
@@ -82,6 +108,13 @@ export async function deleteOrder(orderId) {
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+
+    if (errorText.length > 0) {
+      const errorObject = JSON.parse(errorText);
+      throw new Error(errorObject.errorMessage);
+    }
+
     throw new Error(response.statusText);
   }
 }
