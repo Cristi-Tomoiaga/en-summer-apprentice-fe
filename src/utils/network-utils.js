@@ -24,6 +24,17 @@ export async function fetchEvents(query = null) {
   return data;
 }
 
+export async function fetchCategoriesAndVenues() {
+  const events = await fetchEvents();
+  const venues = new Set(events.map(event => event.venue.location));
+  const types = new Set(events.map(event => event.type));
+
+  return {
+    venues: Array.from(venues),
+    types: Array.from(types),
+  };
+}
+
 export async function fetchOrders() {
   const response = await fetch(`${BASE_URL_JAVA}/api/orders`, {
     mode: 'cors'

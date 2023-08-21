@@ -1,7 +1,7 @@
-import {fetchEvents} from "../utils/network-utils.js";
+import {fetchCategoriesAndVenues, fetchEvents} from "../utils/network-utils.js";
 import {createEventCard, setupEventCardListeners} from "./event-card.js";
 import {addLoader, removeLoader} from "./loader.js";
-import {setupFilterSelectFields, setupFilterListeners, filterEventsByName} from "./filter-events.js";
+import {setupFilterFields, setupFilterListeners, filterEventsByName} from "./filter-events.js";
 
 export const createEventsComponent = () => {
   const eventsContainer = document.querySelector('.events');
@@ -10,16 +10,18 @@ export const createEventsComponent = () => {
   const {searchName, searchParams} = parseSearchParams(new URL(document.location).searchParams);
 
   addLoader();
-  fetchEvents(searchParams)
-    .then(eventsData => {
+  Promise.all([fetchEvents(searchParams), fetchCategoriesAndVenues()])
+    .then(result => {
+      let [eventsData, {venues, types}] = result;
+
       if (eventsData.length) {
         eventsContainer.innerHTML = '';
 
-        if (searchName != null) {
+        if (searchName !== '') {
           eventsData = filterEventsByName(eventsData, searchName);
         }
 
-        setupFilterSelectFields(eventsData);
+        setupFilterFields(venues, types, searchName, searchParams);
         setupFilterListeners(eventsData, (filteredEventsData) => {
           if (filteredEventsData.length) {
             eventsContainer.innerHTML = '';
@@ -51,7 +53,7 @@ const createEventsCards = (eventsContainer, eventsData) => {
 }
 
 const parseSearchParams = (initialSearchParams) => {
-  const eventName = initialSearchParams.get('eventName');
+  const eventName = initialSearchParams.get('eventName') || '';
   initialSearchParams.delete('eventName');
 
   const venueLocation = initialSearchParams.get('venueLocation') || '';
@@ -62,7 +64,7 @@ const parseSearchParams = (initialSearchParams) => {
   });
 
   return {
-    searchName: eventName?.trim(),
+    searchName: eventName.trim(),
     searchParams: parsedSearchParams,
   };
 }

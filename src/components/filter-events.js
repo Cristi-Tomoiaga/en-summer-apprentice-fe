@@ -2,19 +2,23 @@ import {debounce} from "../utils/debounce.js";
 import {fetchEvents} from "../utils/network-utils.js";
 import {addLoader, removeLoader} from "./loader.js";
 
-export const setupFilterSelectFields = (events) => {
-  const venues = new Set(events.map(event => event.venue.location));
+export const setupFilterFields = (venues, types, searchName, searchParams) => {
+  const filterNameInput = document.querySelector('#filter-name');
+  filterNameInput.value = searchName;
+
+  const venueLocation = searchParams.get('venueLocation');
+  const eventType = searchParams.get('eventType');
+
   const filterVenueSelect = document.querySelector('#filter-venue');
-  const venueOptions = Array.from(venues).map(venue => `
-    <option value='${venue}'>${venue}</option>
+  const venueOptions = venues.map(venue => `
+    <option value='${venue}' ${venueLocation === venue ? 'selected' : ''}>${venue}</option>
   `);
   venueOptions.unshift('<option value="Venue">By Venue</option>')
   filterVenueSelect.innerHTML = venueOptions.join('\n');
 
-  const types = new Set(events.map(event => event.type));
   const filterTypeSelect = document.querySelector('#filter-type');
-  const typeOptions = Array.from(types).map(type => `
-    <option value='${type}'>${type}</option>
+  const typeOptions = types.map(type => `
+    <option value='${type}' ${eventType === type ? 'selected' : ''}>${type}</option>
   `);
   typeOptions.unshift('<option value="Type">By Type</option>')
   filterTypeSelect.innerHTML = typeOptions.join('\n');
